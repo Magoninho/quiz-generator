@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"sourceMap": false,
+		"rootDir": "quiz-generator-lib/src",
+		"outDir": "quiz-generator-lib/dist",
+		"allowJs": true,
+		"lib": [
+			"es6",
+			"dom"
+		],
+		"watch": true,
+		"noUnusedLocals": true,
+		"module": "es2015"
+	}
+}
