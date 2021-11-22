@@ -22,13 +22,13 @@ class Question {
 }
 class Quiz {
     // TODO: style manager
-    // TODO: score
     // TODO: quiz name
     constructor() {
         this.questions = [];
         this.questionIndex = 0;
         this.questionDivs = [];
         this.finished = false;
+        this.score = 0;
     }
     /**
      *
@@ -53,10 +53,11 @@ class Quiz {
             // button attributes
             btn.addEventListener("click", () => {
                 if (question.isRightAnswer(a)) {
-                    alert("acertou");
+                    alert("right!");
+                    this.score++;
                 }
                 else {
-                    alert("errou");
+                    alert("wrong! correct answer: " + question.answers[question.rightAnswerIndex]);
                 }
                 this.next();
             });
@@ -67,21 +68,39 @@ class Quiz {
         this.quizDiv.appendChild(questionDiv);
         document.body.appendChild(this.quizDiv);
     }
+    results() {
+        this.quizDiv.style.display = "none";
+        let resultsDiv = document.createElement("div");
+        resultsDiv.innerHTML = `
+		<h1>Results:</h1>
+		<p>Correct Answers: ${this.score}/${this.questions.length}</p>
+
+		<h2>Answers:</h2>
+		`;
+        for (let q = 0; q < this.questions.length; q++) {
+            const question = this.questions[q];
+            const p = document.createElement("p");
+            p.innerHTML = `
+			${q + 1}. ${question.answers[question.rightAnswerIndex]}`;
+            resultsDiv.appendChild(p);
+        }
+        document.body.appendChild(resultsDiv);
+    }
     start(div) {
         this.quizDiv = div; // TODO: change this to be parameter
         this.quizDiv.innerHTML = "";
         this.render(this.questionIndex);
     }
     next() {
+        // before going to the next question, make the previous invisible
+        let oldQuestion = document.getElementsByClassName("question")[this.questionIndex];
+        oldQuestion.style.display = "none";
         if (this.questions[this.questionIndex + 1] != undefined) {
-            // before going to the next question, make the previous invisible
-            let oldQuestion = document.getElementsByClassName("question")[this.questionIndex];
-            oldQuestion.style.display = "none";
             this.questionIndex++;
             this.render(this.questionIndex);
         }
         else {
-            // TODO: show results function
+            this.results();
         }
     }
 }
