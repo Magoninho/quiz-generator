@@ -6,6 +6,7 @@ class Question {
 	answers: string[];
 	rightAnswerIndex: number;
 	visible: boolean;
+	
 
 
 	constructor(questionText: string, answers: string[], rightAnswerIndex: number) {
@@ -30,7 +31,7 @@ class Question {
 			let btn = document.createElement("button");
 			btn.innerHTML = answer;
 
-			
+
 
 			this.answerButtons.push(btn);
 			div.appendChild(btn);
@@ -48,9 +49,11 @@ class Quiz {
 	quizDiv: HTMLDivElement;
 	finished: boolean;
 	score: number;
+	name: string;
+	canPlaySound: boolean;
+	sounds: HTMLAudioElement[];
 	// TODO: style manager
 
-	// TODO: quiz name
 	constructor() {
 		this.questions = [];
 		this.questionIndex = 0;
@@ -69,13 +72,51 @@ class Quiz {
 		this.questions.push(new Question(questionText, answers, rightAnswerIndex));
 	}
 
+	addImage(src: string, width, height): string {
+		return `<img src='${src}' width='${width}' height='${height}'>`;
+	}
+
+	popup(message?: any) {
+		let modal = document.createElement("div");
+		modal.classList.add("modal");
+
+		let modalContent = document.createElement("div");
+		modalContent.classList.add("modal-content");
+		modal.appendChild(modalContent);
+
+		let closeSpan = document.createElement("span");
+		closeSpan.classList.add("close");
+		closeSpan.innerHTML = "&times;";
+		modalContent.appendChild(closeSpan);
+
+		let p = document.createElement("p");
+		p.style.color = "black";
+		p.innerHTML = message;
+		modalContent.appendChild(p);
+
+		modal.style.display = "block";
+		modal.style.textAlign = "center";
+
+		closeSpan.onclick = function () {
+			modal.style.display = "none";
+		}
+		window.onclick = function (event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+
+		document.body.appendChild(modal);
+
+	}
+
 	render(questionIndex: number) {
 		let question = this.questions[questionIndex];
 		let questionDiv: HTMLDivElement = document.createElement("div");
 		questionDiv.classList.add("question");
 		let answerButtons: HTMLButtonElement[] = [];
 		let title: HTMLHeadingElement = document.createElement("h1");
-		title.innerHTML = question.questionText;
+		title.innerHTML = questionIndex + 1 + ". " + question.questionText;
 		questionDiv.appendChild(title);
 
 		for (let a = 0; a < question.answers.length; a++) {
@@ -85,10 +126,12 @@ class Quiz {
 			btn.addEventListener("click", () => {
 
 				if (question.isRightAnswer(a)) {
-					alert("right!");
+					if (this.canPlaySound) this.sounds[0].play();
+					this.popup("<h2 style='color: green;'>right!</h2>");
 					this.score++;
 				} else {
-					alert("wrong! correct answer: " + question.answers[question.rightAnswerIndex]);
+					if (this.canPlaySound) this.sounds[1].play();
+					this.popup("<h2 style='color: red;'>wrong!</h2><br><br><br>correct answer: <br>" + question.answers[question.rightAnswerIndex]);
 				}
 
 				this.next();
@@ -116,15 +159,15 @@ class Quiz {
 			const question = this.questions[q];
 			const p = document.createElement("p");
 			p.innerHTML = `
-			${q+1}. ${question.answers[question.rightAnswerIndex]}`;
+			${q + 1}. ${question.answers[question.rightAnswerIndex]}`;
 			resultsDiv.appendChild(p);
 		}
 
 		document.body.appendChild(resultsDiv);
 	}
-	
 
-	start(div) {
+
+	start(div: HTMLDivElement) {
 		this.quizDiv = div; // TODO: change this to be parameter
 		this.quizDiv.innerHTML = "";
 		this.render(this.questionIndex);
@@ -140,5 +183,12 @@ class Quiz {
 		} else {
 			this.results();
 		}
+	}
+
+	addSounds(soundRight: HTMLAudioElement, soundWrong: HTMLAudioElement): void {
+		this.canPlaySound = true;
+		let audioRight = soundRight;
+		let audioWrong = soundWrong;
+		this.sounds = [audioRight, audioWrong];
 	}
 }

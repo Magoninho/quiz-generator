@@ -22,7 +22,6 @@ class Question {
 }
 class Quiz {
     // TODO: style manager
-    // TODO: quiz name
     constructor() {
         this.questions = [];
         this.questionIndex = 0;
@@ -39,13 +38,42 @@ class Quiz {
     addQuestion(questionText, answers, rightAnswerIndex) {
         this.questions.push(new Question(questionText, answers, rightAnswerIndex));
     }
+    addImage(src, width, height) {
+        return `<img src='${src}' width='${width}' height='${height}'>`;
+    }
+    popup(message) {
+        let modal = document.createElement("div");
+        modal.classList.add("modal");
+        let modalContent = document.createElement("div");
+        modalContent.classList.add("modal-content");
+        modal.appendChild(modalContent);
+        let closeSpan = document.createElement("span");
+        closeSpan.classList.add("close");
+        closeSpan.innerHTML = "&times;";
+        modalContent.appendChild(closeSpan);
+        let p = document.createElement("p");
+        p.style.color = "black";
+        p.innerHTML = message;
+        modalContent.appendChild(p);
+        modal.style.display = "block";
+        modal.style.textAlign = "center";
+        closeSpan.onclick = function () {
+            modal.style.display = "none";
+        };
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+        document.body.appendChild(modal);
+    }
     render(questionIndex) {
         let question = this.questions[questionIndex];
         let questionDiv = document.createElement("div");
         questionDiv.classList.add("question");
         let answerButtons = [];
         let title = document.createElement("h1");
-        title.innerHTML = question.questionText;
+        title.innerHTML = questionIndex + 1 + ". " + question.questionText;
         questionDiv.appendChild(title);
         for (let a = 0; a < question.answers.length; a++) {
             const answer = question.answers[a];
@@ -53,11 +81,15 @@ class Quiz {
             // button attributes
             btn.addEventListener("click", () => {
                 if (question.isRightAnswer(a)) {
-                    alert("right!");
+                    if (this.canPlaySound)
+                        this.sounds[0].play();
+                    this.popup("<h2 style='color: green;'>right!</h2>");
                     this.score++;
                 }
                 else {
-                    alert("wrong! correct answer: " + question.answers[question.rightAnswerIndex]);
+                    if (this.canPlaySound)
+                        this.sounds[1].play();
+                    this.popup("<h2 style='color: red;'>wrong!</h2><br><br><br>correct answer: <br>" + question.answers[question.rightAnswerIndex]);
                 }
                 this.next();
             });
@@ -102,5 +134,11 @@ class Quiz {
         else {
             this.results();
         }
+    }
+    addSounds(soundRight, soundWrong) {
+        this.canPlaySound = true;
+        let audioRight = soundRight;
+        let audioWrong = soundWrong;
+        this.sounds = [audioRight, audioWrong];
     }
 }
