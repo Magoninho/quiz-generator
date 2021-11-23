@@ -1,5 +1,6 @@
-let quiz = new Quiz("Quiz teste");
+let quiz = new Quiz();
 
+quiz.setShuffle(true);
 
 quiz.addQuestion("Quem criou a teoria da relatividade?", [
 	"isaac newton", 
@@ -25,7 +26,7 @@ quiz.addQuestion(
 		"peperoni",
 ], 1);
 
-	
+
 quiz.addSounds(
 	document.getElementById("audio-win"),
 	document.getElementById("audio-wrong")

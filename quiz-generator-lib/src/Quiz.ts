@@ -1,3 +1,23 @@
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffleArray(array) {
+	let currentIndex = array.length, randomIndex;
+
+	// While there remain elements to shuffle...
+	while (currentIndex != 0) {
+
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
+
+		// And swap it with the current element.
+		[array[currentIndex], array[randomIndex]] = [
+			array[randomIndex], array[currentIndex]];
+	}
+
+	return array;
+}
+
+
 class Question {
 
 	heading: HTMLHeadingElement;
@@ -30,16 +50,16 @@ class Quiz {
 	quizDiv: HTMLDivElement;
 	finished: boolean;
 	score: number;
-	name: string; // quiz name
 	canPlaySound: boolean;
 	sounds: HTMLAudioElement[];
-	// TODO: style manager
+	shuffleAnswers: boolean;
 
 	constructor() {
 		this.questions = [];
 		this.questionIndex = 0;
 		this.finished = false;
 		this.score = 0;
+		this.shuffleAnswers = false;
 	}
 
 	/**
@@ -49,7 +69,17 @@ class Quiz {
 	 * @param rightAnswerIndex - The index of the right answer inside the answers array
 	 */
 	addQuestion(questionText: string, answers: string[], rightAnswerIndex: number) {
-		this.questions.push(new Question(questionText, answers, rightAnswerIndex));
+		if (this.shuffleAnswers) {
+			// store the answer
+			let answer = answers[rightAnswerIndex];
+			// shuffle
+			let shuffled = shuffleArray(answers);
+			// generates a new index
+			let newRightAnswerIndex = shuffled.indexOf(answer);
+			this.questions.push(new Question(questionText, shuffled, newRightAnswerIndex));
+		} else {
+			this.questions.push(new Question(questionText, answers, rightAnswerIndex));
+		}
 	}
 
 	/**
@@ -120,6 +150,7 @@ class Quiz {
 			// button attributes
 			btn.addEventListener("click", () => {
 
+				// checks if the user clicked on the right answer
 				if (question.isRightAnswer(a)) {
 					if (this.canPlaySound) this.sounds[0].play();
 					this.popup("<h2 style='color: green;'>right!</h2>");
@@ -169,7 +200,7 @@ class Quiz {
 	 * @param div 
 	 */
 	start(div: HTMLDivElement) {
-		this.quizDiv = div; // TODO: change this to be parameter
+		this.quizDiv = div;
 		this.quizDiv.innerHTML = "";
 		this.render(this.questionIndex);
 	}
@@ -200,5 +231,9 @@ class Quiz {
 		let audioRight = soundRight;
 		let audioWrong = soundWrong;
 		this.sounds = [audioRight, audioWrong];
+	}
+
+	setShuffle(enabled: boolean): void {
+		this.shuffleAnswers = enabled;
 	}
 }
