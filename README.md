@@ -78,3 +78,14 @@ let myDiv = document.getElementById("myQuizDiv");
 // Tip: you can use this in a function so you can start the quiz by pressing a button for example
 quiz.start(myDiv);
 ```
+
+6. You can also add sounds using `quiz.addSounds()`
+```js
+// Adding sounds
+quiz.addSounds(
+	document.getElementById("audio-win"),
+	document.getElementById("audio-wrong")
+);
+```
+
+There are audios included in this example. [Click here to see](./sounds/)
