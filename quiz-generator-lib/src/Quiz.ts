@@ -285,3 +285,5 @@ class Quiz {
 		this.shuffleAnswers = enabled;
 	}
 }
+
+// Made with love :)
