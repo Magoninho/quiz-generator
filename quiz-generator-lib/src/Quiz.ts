@@ -5,37 +5,19 @@ class Question {
 	questionText: string;
 	answers: string[];
 	rightAnswerIndex: number;
-	visible: boolean;
-	
-
 
 	constructor(questionText: string, answers: string[], rightAnswerIndex: number) {
 		this.questionText = questionText;
 		this.answers = answers;
 		this.rightAnswerIndex = rightAnswerIndex;
-		this.visible = false;
 	}
 
+	/**
+	 * returns if the index is equal to the right answer index
+	 * @param index - question index
+	 */
 	isRightAnswer(index: number): boolean {
 		return index == this.rightAnswerIndex;
-	}
-
-	render(div: HTMLDivElement): void {
-		this.answerButtons = [];
-
-
-		div.appendChild(this.heading);
-
-		for (let a = 0; a < this.answers.length; a++) {
-			const answer = this.answers[a];
-			let btn = document.createElement("button");
-			btn.innerHTML = answer;
-
-
-
-			this.answerButtons.push(btn);
-			div.appendChild(btn);
-		}
 	}
 
 }
@@ -45,11 +27,10 @@ class Quiz {
 	questions: Question[];
 	currentQuestion: Question;
 	questionIndex: number;
-	questionDivs: HTMLDivElement[];
 	quizDiv: HTMLDivElement;
 	finished: boolean;
 	score: number;
-	name: string;
+	name: string; // quiz name
 	canPlaySound: boolean;
 	sounds: HTMLAudioElement[];
 	// TODO: style manager
@@ -57,25 +38,35 @@ class Quiz {
 	constructor() {
 		this.questions = [];
 		this.questionIndex = 0;
-		this.questionDivs = [];
 		this.finished = false;
 		this.score = 0;
 	}
 
 	/**
-	 * 
-	 * @param {string} questionText - Enter the question text
-	 * @param {string[]} answers - enter an array of strings
-	 * @param {number} rightAnswerIndex - The index of the right answer inside the answers array
+	 * Adds a new question to the Quiz.
+	 * @param questionText - Enter the question text
+	 * @param answers - enter an array of strings
+	 * @param rightAnswerIndex - The index of the right answer inside the answers array
 	 */
 	addQuestion(questionText: string, answers: string[], rightAnswerIndex: number) {
 		this.questions.push(new Question(questionText, answers, rightAnswerIndex));
 	}
 
-	addImage(src: string, width, height): string {
+	/**
+	 * An utility function that returns an image tag.
+	 * @param src - image source
+	 * @param width - image width
+	 * @param height - image height
+	 * @returns - image tag
+	 */
+	addImage(src: string, width: number, height: number): string {
 		return `<img src='${src}' width='${width}' height='${height}'>`;
 	}
 
+	/**
+	 * Creates a pop up with a message
+	 * @param message 
+	 */
 	popup(message?: any) {
 		let modal = document.createElement("div");
 		modal.classList.add("modal");
@@ -110,6 +101,10 @@ class Quiz {
 
 	}
 
+	/**
+	 * Renders a question based on the question index.
+	 * @param questionIndex 
+	 */
 	render(questionIndex: number) {
 		let question = this.questions[questionIndex];
 		let questionDiv: HTMLDivElement = document.createElement("div");
@@ -144,6 +139,9 @@ class Quiz {
 		document.body.appendChild(this.quizDiv);
 	}
 
+	/**
+	 * Renders the results
+	 */
 	results() {
 		this.quizDiv.style.display = "none";
 
@@ -166,13 +164,19 @@ class Quiz {
 		document.body.appendChild(resultsDiv);
 	}
 
-
+	/**
+	 * Starts the quiz on an HTML div
+	 * @param div 
+	 */
 	start(div: HTMLDivElement) {
 		this.quizDiv = div; // TODO: change this to be parameter
 		this.quizDiv.innerHTML = "";
 		this.render(this.questionIndex);
 	}
 
+	/**
+	 * Goes to the next question
+	 */
 	next() {
 		// before going to the next question, make the previous invisible
 		let oldQuestion = document.getElementsByClassName("question")[this.questionIndex] as HTMLDivElement;
@@ -181,10 +185,16 @@ class Quiz {
 			this.questionIndex++;
 			this.render(this.questionIndex);
 		} else {
+			this.finished = true;
 			this.results();
 		}
 	}
 
+	/**
+	 * Add sounds to be played.
+	 * @param soundRight Sound that will be played when the user answers correctly
+	 * @param soundWrong Sount that will be played when the user answers wrongly
+	 */
 	addSounds(soundRight: HTMLAudioElement, soundWrong: HTMLAudioElement): void {
 		this.canPlaySound = true;
 		let audioRight = soundRight;

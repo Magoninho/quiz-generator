@@ -3,21 +3,13 @@ class Question {
         this.questionText = questionText;
         this.answers = answers;
         this.rightAnswerIndex = rightAnswerIndex;
-        this.visible = false;
     }
+    /**
+     * returns if the index is equal to the right answer index
+     * @param index - question index
+     */
     isRightAnswer(index) {
         return index == this.rightAnswerIndex;
-    }
-    render(div) {
-        this.answerButtons = [];
-        div.appendChild(this.heading);
-        for (let a = 0; a < this.answers.length; a++) {
-            const answer = this.answers[a];
-            let btn = document.createElement("button");
-            btn.innerHTML = answer;
-            this.answerButtons.push(btn);
-            div.appendChild(btn);
-        }
     }
 }
 class Quiz {
@@ -25,22 +17,32 @@ class Quiz {
     constructor() {
         this.questions = [];
         this.questionIndex = 0;
-        this.questionDivs = [];
         this.finished = false;
         this.score = 0;
     }
     /**
-     *
-     * @param {string} questionText - Enter the question text
-     * @param {string[]} answers - enter an array of strings
-     * @param {number} rightAnswerIndex - The index of the right answer inside the answers array
+     * Adds a new question to the Quiz.
+     * @param questionText - Enter the question text
+     * @param answers - enter an array of strings
+     * @param rightAnswerIndex - The index of the right answer inside the answers array
      */
     addQuestion(questionText, answers, rightAnswerIndex) {
         this.questions.push(new Question(questionText, answers, rightAnswerIndex));
     }
+    /**
+     * An utility function that returns an image tag.
+     * @param src - image source
+     * @param width - image width
+     * @param height - image height
+     * @returns - image tag
+     */
     addImage(src, width, height) {
         return `<img src='${src}' width='${width}' height='${height}'>`;
     }
+    /**
+     * Creates a pop up with a message
+     * @param message
+     */
     popup(message) {
         let modal = document.createElement("div");
         modal.classList.add("modal");
@@ -67,6 +69,10 @@ class Quiz {
         };
         document.body.appendChild(modal);
     }
+    /**
+     * Renders a question based on the question index.
+     * @param questionIndex
+     */
     render(questionIndex) {
         let question = this.questions[questionIndex];
         let questionDiv = document.createElement("div");
@@ -100,6 +106,9 @@ class Quiz {
         this.quizDiv.appendChild(questionDiv);
         document.body.appendChild(this.quizDiv);
     }
+    /**
+     * Renders the results
+     */
     results() {
         this.quizDiv.style.display = "none";
         let resultsDiv = document.createElement("div");
@@ -118,11 +127,18 @@ class Quiz {
         }
         document.body.appendChild(resultsDiv);
     }
+    /**
+     * Starts the quiz on an HTML div
+     * @param div
+     */
     start(div) {
         this.quizDiv = div; // TODO: change this to be parameter
         this.quizDiv.innerHTML = "";
         this.render(this.questionIndex);
     }
+    /**
+     * Goes to the next question
+     */
     next() {
         // before going to the next question, make the previous invisible
         let oldQuestion = document.getElementsByClassName("question")[this.questionIndex];
@@ -132,9 +148,15 @@ class Quiz {
             this.render(this.questionIndex);
         }
         else {
+            this.finished = true;
             this.results();
         }
     }
+    /**
+     * Add sounds to be played.
+     * @param soundRight Sound that will be played when the user answers correctly
+     * @param soundWrong Sount that will be played when the user answers wrongly
+     */
     addSounds(soundRight, soundWrong) {
         this.canPlaySound = true;
         let audioRight = soundRight;

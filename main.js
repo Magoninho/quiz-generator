@@ -1,7 +1,12 @@
 let quiz = new Quiz("Quiz teste");
 
 
-quiz.addQuestion("Quem criou a teoria da relatividade?", ["isaac newton", "albert einstein", "nikola tesla", "sócrates", "ednaldo pereira"], 4);
+quiz.addQuestion("Quem criou a teoria da relatividade?", [
+	"isaac newton", 
+	"albert einstein", 
+	"nikola tesla", 
+	"sócrates", 
+	"ednaldo pereira"], 4);
 
 
 quiz.addQuestion("04/04?", [
@@ -20,7 +25,7 @@ quiz.addQuestion(
 		"peperoni",
 ], 1);
 
-
+	
 quiz.addSounds(
 	document.getElementById("audio-win"),
 	document.getElementById("audio-wrong")
