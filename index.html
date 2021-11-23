@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>cool</title>
+	<title>Example Quiz</title>
 	<link rel="stylesheet" href="style.css">
 
 	
@@ -13,9 +13,9 @@
 
 	<audio src="sounds/right.wav" id="audio-win"></audio>
 	<audio src="sounds/wrong.wav" id="audio-wrong"></audio>
-	<div class="main-quiz">
+	<div id="myQuizDiv">
 		<h1>Exemplo de Quiz</h1>
-		<button id="btn-start">Começar</button>
+		<button id="btn-start" onclick="startQuiz()">Começar</button>
 	</div>
 
 	<script src="quiz-generator-lib/dist/Quiz.js"></script>
