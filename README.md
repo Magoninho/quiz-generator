@@ -12,7 +12,7 @@
 ## Installation
 Include this line in your html:
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Magoninho/quiz-generator@master/quiz-generator-lib/dist/Quiz.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Magoninho/quiz-generator@1.0/quiz-generator-lib/dist/Quiz.js"></script>
 ```
 
 ## Creating a project
