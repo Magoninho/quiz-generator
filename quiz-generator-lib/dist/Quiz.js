@@ -29,6 +29,8 @@ class Question {
 }
 class Quiz {
     constructor() {
+        this.selectedAnswers = [];
+        this.shouldPopUp = true; // determines if the user should know if the answer is right when answering
         this.questions = [];
         this.questionIndex = 0;
         this.finished = false;
@@ -109,20 +111,27 @@ class Quiz {
         questionDiv.appendChild(title);
         for (let a = 0; a < question.answers.length; a++) {
             const answer = question.answers[a];
+            // creates a button
             let btn = document.createElement("button");
             // button attributes
             btn.addEventListener("click", () => {
+                // pushes the selected answer to the selected answer array (will be used in the results function)
+                this.selectedAnswers.push(a);
                 // checks if the user clicked on the right answer
                 if (question.isRightAnswer(a)) {
-                    if (this.canPlaySound)
-                        this.sounds[0].play();
-                    this.popup("<h2 style='color: green;'>right!</h2>");
+                    if (this.shouldPopUp) {
+                        if (this.canPlaySound)
+                            this.sounds[0].play();
+                        this.popup("<h2 style='color: green;'>right!</h2>");
+                    }
                     this.score++;
                 }
                 else {
-                    if (this.canPlaySound)
-                        this.sounds[1].play();
-                    this.popup("<h2 style='color: red;'>wrong!</h2><br><br><br>correct answer: <br>" + question.answers[question.rightAnswerIndex]);
+                    if (this.shouldPopUp) {
+                        if (this.canPlaySound)
+                            this.sounds[1].play();
+                        this.popup("<h2 style='color: red;'>wrong!</h2><br><br><br>correct answer: <br>" + question.answers[question.rightAnswerIndex]);
+                    }
                 }
                 this.next();
             });
@@ -140,17 +149,34 @@ class Quiz {
         this.quizDiv.style.display = "none";
         let resultsDiv = document.createElement("div");
         resultsDiv.innerHTML = `
-		<h1>Results:</h1>
-		<p>Correct Answers: ${this.score}/${this.questions.length}</p>
+		<h1>Results</h1>
+		<p>Score: ${this.score}/${this.questions.length}</p>
 
 		<h2>Answers:</h2>
 		`;
+        // creating the table
+        const table = document.createElement("table");
+        const thead = table.createTHead();
+        const row = thead.insertRow(0);
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.innerHTML = "<b>Your answer</b>";
+        cell2.innerHTML = "<b>Right answer</b>";
         for (let q = 0; q < this.questions.length; q++) {
             const question = this.questions[q];
-            const p = document.createElement("p");
-            p.innerHTML = `
-			${q + 1}. ${question.answers[question.rightAnswerIndex]}`;
-            resultsDiv.appendChild(p);
+            // checks if the answer index the user selected is the same as the right answer index
+            // this will be used to set colors on the results
+            let isRightAnswer = this.selectedAnswers[q] == question.rightAnswerIndex;
+            let color = isRightAnswer ? "lightgreen" : "red";
+            // renders the answers comparison (user answer / right answer)
+            let row = table.insertRow(q + 1);
+            let userCell = row.insertCell(0);
+            let rightAnswerCell = row.insertCell(1);
+            userCell.innerHTML = `<span style="color: ${color}">${question.answers[this.selectedAnswers[q]]}</span>`;
+            rightAnswerCell.innerHTML = `<span style="color: lightgreen">${question.answers[question.rightAnswerIndex]}</span>`;
+            // table.innerHTML = `
+            // ${q + 1}. <span style="color: ${color}">${question.answers[this.selectedAnswers[q]]}</span> / <span style="color: green">${question.answers[question.rightAnswerIndex]}</span>`;
+            resultsDiv.appendChild(table);
         }
         document.body.appendChild(resultsDiv);
     }
@@ -239,5 +265,9 @@ class Quiz {
     setShuffle(enabled) {
         this.shuffleAnswers = enabled;
     }
+    disablePopUp() {
+        this.shouldPopUp = false;
+    }
 }
-// Made with love :)
+// Made with love
+// by mago :)
