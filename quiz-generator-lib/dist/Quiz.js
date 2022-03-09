@@ -26,6 +26,17 @@ class Question {
     isRightAnswer(index) {
         return index == this.rightAnswerIndex;
     }
+    addExplanation(message) {
+        this.explanation = message;
+    }
+    getExplanation() {
+        if (this.explanation != undefined) {
+            return this.explanation;
+        }
+        else {
+            return "-";
+        }
+    }
 }
 class Quiz {
     constructor() {
@@ -56,6 +67,10 @@ class Quiz {
         else {
             this.questions.push(new Question(questionText, answers, rightAnswerIndex));
         }
+    }
+    addQuestionExplanation(questionIndex, message) {
+        let question = this.questions[questionIndex];
+        question.addExplanation(message);
     }
     /**
      * An utility function that returns an image tag.
@@ -160,22 +175,26 @@ class Quiz {
         const row = thead.insertRow(0);
         const cell1 = row.insertCell(0);
         const cell2 = row.insertCell(1);
+        const cell3 = row.insertCell(2);
         cell1.innerHTML = "<b>Your answer</b>";
         cell2.innerHTML = "<b>Right answer</b>";
+        cell3.innerHTML = "<b>Explanation</b>";
         for (let q = 0; q < this.questions.length; q++) {
             const question = this.questions[q];
+            const questionExplanation = question.getExplanation();
+            console.log(question);
             // checks if the answer index the user selected is the same as the right answer index
             // this will be used to set colors on the results
             let isRightAnswer = this.selectedAnswers[q] == question.rightAnswerIndex;
             let color = isRightAnswer ? "lightgreen" : "red";
-            // renders the answers comparison (user answer / right answer)
+            // renders the answers comparison in the table (user answer / right answer)
             let row = table.insertRow(q + 1);
             let userCell = row.insertCell(0);
             let rightAnswerCell = row.insertCell(1);
+            let explanationCell = row.insertCell(2);
             userCell.innerHTML = `<span style="color: ${color}">${question.answers[this.selectedAnswers[q]]}</span>`;
             rightAnswerCell.innerHTML = `<span style="color: lightgreen">${question.answers[question.rightAnswerIndex]}</span>`;
-            // table.innerHTML = `
-            // ${q + 1}. <span style="color: ${color}">${question.answers[this.selectedAnswers[q]]}</span> / <span style="color: green">${question.answers[question.rightAnswerIndex]}</span>`;
+            explanationCell.innerHTML = questionExplanation;
             resultsDiv.appendChild(table);
         }
         document.body.appendChild(resultsDiv);
